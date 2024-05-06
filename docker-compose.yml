@@ -1,6 +1,6 @@
 services:
-  user-service:
-    container_name: user-service-1
+  user-app:
+    container_name: user-app
     build:
       context: .
       dockerfile: Dockerfile

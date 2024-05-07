@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     # expose:
     #   - 8080
-   ports:
+    ports:
      - "8080:8080"
     networks:
       - my-network

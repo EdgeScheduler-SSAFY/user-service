@@ -3,12 +3,15 @@ package com.ssafy.userservice.service;
 import com.ssafy.userservice.dto.AuthDto;
 import com.ssafy.userservice.dto.MemberResponseDto;
 import com.ssafy.userservice.entity.Auth;
+import com.ssafy.userservice.entity.Member;
 import com.ssafy.userservice.repository.AuthRepository;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -30,6 +33,13 @@ public class AuthServiceImpl implements AuthService{
         Auth auth = authRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Can't find auth with this id. -> " + id));
         return MemberResponseDto.getMemberResponse(auth);
+    }
+
+    @Override
+    public List<MemberResponseDto> getAllMember() {
+        List<Auth> authList = authRepository.findAll();
+        return authList.stream().map(MemberResponseDto::getMemberResponse)
+                .toList();
     }
 
 }

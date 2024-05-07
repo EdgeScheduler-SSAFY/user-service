@@ -1,11 +1,14 @@
 package com.ssafy.userservice.service;
 
 import com.ssafy.userservice.dto.MemberDto;
+import com.ssafy.userservice.dto.MemberResponseDto;
 import com.ssafy.userservice.entity.Auth;
 import com.ssafy.userservice.entity.Member;
 import com.ssafy.userservice.repository.MemberRepository;
 import com.ssafy.userservice.vo.RequestMember;
 import jakarta.ws.rs.NotFoundException;
+
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,6 +16,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public MemberDto creteMember(Auth auth) {
         Member member = Member.builder()
             .auth(auth)
@@ -45,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public MemberDto updateMember(Integer id, RequestMember requestMember) {
         Member member = memberRepository.findById(id).orElseThrow(NotFoundException::new);
 
@@ -61,4 +67,14 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
         return MemberDto.getMember(member);
     }
+
+    @Override
+    @Transactional
+    public MemberDto changeTimeZone(Integer id, String zoneId) {
+        Member member = memberRepository.findById(id).orElseThrow(NotFoundException::new);
+        member.changeZoneId(zoneId);
+        memberRepository.save(member);
+        return MemberDto.getMember(member);
+    }
+
 }

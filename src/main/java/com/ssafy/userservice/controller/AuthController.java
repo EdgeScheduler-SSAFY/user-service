@@ -5,8 +5,10 @@ import com.ssafy.userservice.dto.MemberResponseDto;
 import com.ssafy.userservice.security.jwt.JwtProperties;
 import com.ssafy.userservice.security.jwt.JwtTokenDto;
 import com.ssafy.userservice.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,5 +38,12 @@ public class AuthController {
         log.debug("id:{}", id);
         MemberResponseDto memberResponseDto = authService.getAuthById(id);
         return ResponseEntity.ok(memberResponseDto);
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<?> reissue(@RequestHeader(name = "Authorization", required = true) String accessToken,
+                                     @RequestHeader(name = JwtProperties.REFRESH_TOKEN, required = true) String refreshToken) {
+        JwtTokenDto reissuedToken = authService.reissueToken(accessToken, refreshToken);
+        return ResponseEntity.ok(reissuedToken.responseDto());
     }
 }

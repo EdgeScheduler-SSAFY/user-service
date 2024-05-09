@@ -32,7 +32,7 @@ public class SecurityConfig {
         "/swagger-ui/**", "/api-docs", "/swagger-ui.html",
         "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
     };
-//    private final CorsConfig corsConfig;
+    private final CorsConfig corsConfig;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -53,8 +53,8 @@ public class SecurityConfig {
 
         // 기본 세팅
         http
-            .csrf(AbstractHttpConfigurer::disable);
-//            .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
 
         // JWT 토큰 인증 설정
         http

@@ -1,5 +1,6 @@
 package com.ssafy.userservice.service;
 
+import com.ssafy.userservice.dto.ChangeTimeZoneMessage;
 import com.ssafy.userservice.dto.MemberDto;
 import com.ssafy.userservice.entity.Auth;
 import com.ssafy.userservice.entity.Member;
@@ -8,7 +9,7 @@ import com.ssafy.userservice.vo.RequestMember;
 import com.ssafy.userservice.vo.RequestMemberTimeZone;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${KAFKA_TOPIC}")
+    private String topic;
 
 //    @Override
 //    public MemberDto createMember(MemberDto memberDto) {
@@ -50,11 +54,13 @@ public class MemberServiceImpl implements MemberService {
         if (requestMember.getDepartment() != null) {
             member.changeDepartment(requestMember.getDepartment());
         }
-        if (requestMember.getRegion() != null) {
+        if (requestMember.getRegion() != null && requestMember.getZoneId() != null) {
             member.changeRegion(requestMember.getRegion());
-        }
-        if (requestMember.getZoneId() != null) {
             member.changeZoneId(requestMember.getZoneId());
+            kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
+                .memberId(id)
+                .zoneId(requestMember.getZoneId())
+                .build());
         }
         member.changeProfile(requestMember.getProfile());
         memberRepository.save(member);
@@ -67,6 +73,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(id).orElseThrow(NotFoundException::new);
         member.changeRegion(memberTimeZone.getRegion());
         member.changeZoneId(memberTimeZone.getZoneId());
+        kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
+            .memberId(id)
+            .zoneId(memberTimeZone.getZoneId())
+            .build());
         memberRepository.save(member);
         return MemberDto.getMember(member);
     }

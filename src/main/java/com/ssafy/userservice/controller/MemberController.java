@@ -2,6 +2,7 @@ package com.ssafy.userservice.controller;
 
 import com.ssafy.userservice.dto.MemberDto;
 import com.ssafy.userservice.dto.MemberResponseDto;
+import com.ssafy.userservice.security.annotation.AuthID;
 import com.ssafy.userservice.service.AuthService;
 import com.ssafy.userservice.service.MemberService;
 import com.ssafy.userservice.vo.Greeting;
@@ -33,9 +34,7 @@ public class MemberController {
     private final AuthService authService;
 
 //    private final RabbitTemplate rabbitTemplate;
-
-    @Autowired
-    private Greeting greeting;
+    private final Greeting greeting;
 
 
     @GetMapping("/welcome")
@@ -51,7 +50,7 @@ public class MemberController {
      */
     @PatchMapping("/me")
     public ResponseEntity<MemberDto> updateMember(
-        @RequestHeader(name = "Authorization", required = true) Integer id,
+        @AuthID Integer id,
         @RequestBody RequestMember requestMember) {
         log.debug("id= {}", id);
         MemberDto memberDto = memberService.updateMember(id, requestMember);
@@ -64,8 +63,8 @@ public class MemberController {
      * @return
      */
     @PutMapping("/my/timezone")
-    public ResponseEntity<MemberDto> updateMember(
-        @RequestHeader(name = "Authorization", required = true) Integer id,
+    public ResponseEntity<MemberDto> updateMemberTimeZone(
+        @AuthID Integer id,
         @RequestBody String zoneId) {
         MemberDto memberDto = memberService.changeTimeZone(id, zoneId);
         return ResponseEntity.ok(memberDto);

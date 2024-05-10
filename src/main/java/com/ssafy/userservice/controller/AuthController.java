@@ -2,6 +2,7 @@ package com.ssafy.userservice.controller;
 
 
 import com.ssafy.userservice.dto.MemberResponseDto;
+import com.ssafy.userservice.security.annotation.AuthID;
 import com.ssafy.userservice.security.jwt.JwtProperties;
 import com.ssafy.userservice.security.jwt.JwtTokenDto;
 import com.ssafy.userservice.service.AuthService;
@@ -34,7 +35,7 @@ public class AuthController {
      */
     @GetMapping("/me")
     public ResponseEntity<MemberResponseDto> getAuth(
-            @RequestHeader(name = "Authorization", required = true) Integer id) {
+            @AuthID Integer id) {
         log.debug("id:{}", id);
         MemberResponseDto memberResponseDto = authService.getAuthById(id);
         return ResponseEntity.ok(memberResponseDto);

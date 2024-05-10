@@ -13,6 +13,7 @@ public class MemberDto {
     private Integer id;
     private String email;
     private String department;
+    private String region;
     private String zoneId;
 
     public static MemberDto getMember(Member member) {
@@ -20,6 +21,7 @@ public class MemberDto {
             .id(member.getId())
             .email(member.getEmail())
             .department(member.getDepartment())
+            .region(member.getRegion())
             .zoneId(member.getZoneId())
             .build();
     }

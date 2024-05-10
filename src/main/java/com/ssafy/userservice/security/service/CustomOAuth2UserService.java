@@ -63,7 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         if (optionalUser.isEmpty()) {
-            memberService.creteMember(auth);
+            memberService.createMember(auth);
         }
 
         return new CustomUserDetails(auth, oAuth2User.getAttributes());

@@ -7,21 +7,21 @@ import com.ssafy.userservice.service.AuthService;
 import com.ssafy.userservice.service.MemberService;
 import com.ssafy.userservice.vo.Greeting;
 import com.ssafy.userservice.vo.RequestMember;
-import com.ssafy.userservice.vo.ResponseMember;
+import com.ssafy.userservice.vo.RequestMemberTimeZone;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/members")
@@ -29,11 +29,9 @@ import java.util.List;
 public class MemberController {
 
     private static final Logger log = LoggerFactory.getLogger(MemberController.class);
-    private final Environment env;
+
     private final MemberService memberService;
     private final AuthService authService;
-
-//    private final RabbitTemplate rabbitTemplate;
     private final Greeting greeting;
 
 
@@ -65,8 +63,8 @@ public class MemberController {
     @PutMapping("/my/timezone")
     public ResponseEntity<MemberDto> updateMemberTimeZone(
         @AuthID Integer id,
-        @RequestBody String zoneId) {
-        MemberDto memberDto = memberService.changeTimeZone(id, zoneId);
+        @RequestBody RequestMemberTimeZone requestMemberTimeZone) {
+        MemberDto memberDto = memberService.changeTimeZone(id, requestMemberTimeZone);
         return ResponseEntity.ok(memberDto);
     }
 

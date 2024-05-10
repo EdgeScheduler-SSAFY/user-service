@@ -23,6 +23,7 @@ public class MemberResponseDto {
     private Role role;
     private String email;
     private String department;
+    private String region;
     private String zoneId;
 
     public static MemberResponseDto getMemberResponse(Auth auth) {
@@ -33,6 +34,7 @@ public class MemberResponseDto {
                 .role(auth.getRole())
                 .email(auth.getMember().getEmail())
                 .department(auth.getMember().getDepartment())
+                .region(auth.getMember().getRegion())
                 .zoneId(auth.getMember().getZoneId())
                 .build();
     }

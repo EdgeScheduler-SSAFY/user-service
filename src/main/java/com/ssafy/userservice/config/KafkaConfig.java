@@ -12,12 +12,12 @@ import org.springframework.kafka.core.ProducerFactory;
 public class KafkaConfig {
 
     @Bean
-    public ProducerFactory<String, ChangeTimeZoneMessage> producerFactory(KafkaProperties properties) {
+    public ProducerFactory<String, Object> producerFactory(KafkaProperties properties) {
         return new DefaultKafkaProducerFactory<>(properties.buildProducerProperties(null));
     }
 
     @Bean
-    public KafkaTemplate<String, ChangeTimeZoneMessage> kafkaTemplate(KafkaProperties properties) {
+    public KafkaTemplate<String, Object> kafkaTemplate(KafkaProperties properties) {
         return new KafkaTemplate<>(producerFactory(properties));
     }
 }

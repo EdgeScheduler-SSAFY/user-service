@@ -3,12 +3,14 @@ package com.ssafy.userservice.service;
 import com.ssafy.userservice.dto.MemberDto;
 import com.ssafy.userservice.entity.Auth;
 import com.ssafy.userservice.vo.RequestMember;
+import com.ssafy.userservice.vo.RequestMemberTimeZone;
 
 public interface MemberService {
 
-    MemberDto createMember(MemberDto memberDto);
-
-    MemberDto creteMember(Auth auth);
+    void createMember(Auth auth, String email);
 
     MemberDto updateMember(Integer id, RequestMember requestMember);
+
+    MemberDto changeTimeZone(Integer id, RequestMemberTimeZone memberTimeZone);
+
 }

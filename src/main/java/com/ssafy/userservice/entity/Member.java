@@ -23,6 +23,7 @@ public class Member {
     private String email;
     private String department;
     //    @Column(nullable = false, columnDefinition = "INT DEFAULT Asia/Seoul")
+    private String region;
     private String zoneId;
 
     @MapsId
@@ -36,6 +37,10 @@ public class Member {
 
     public void changeEmail(String email) {
         this.email = email;
+    }
+
+    public void changeRegion(String region) {
+        this.region = region;
     }
 
     public void changeZoneId(String zoneId) {

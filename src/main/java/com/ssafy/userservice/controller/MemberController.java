@@ -1,26 +1,25 @@
 package com.ssafy.userservice.controller;
 
 import com.ssafy.userservice.dto.MemberDto;
+import com.ssafy.userservice.dto.MemberResponseDto;
+import com.ssafy.userservice.security.annotation.AuthID;
+import com.ssafy.userservice.service.AuthService;
 import com.ssafy.userservice.service.MemberService;
 import com.ssafy.userservice.vo.Greeting;
 import com.ssafy.userservice.vo.RequestMember;
-import com.ssafy.userservice.vo.ResponseMember;
+import com.ssafy.userservice.vo.RequestMemberTimeZone;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,13 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private static final Logger log = LoggerFactory.getLogger(MemberController.class);
-    private final Environment env;
+
     private final MemberService memberService;
-
-//    private final RabbitTemplate rabbitTemplate;
-
-    @Autowired
-    private Greeting greeting;
+    private final AuthService authService;
+    private final Greeting greeting;
 
 
     @GetMapping("/welcome")
@@ -44,26 +40,51 @@ public class MemberController {
         return greeting.getMessage();
     }
 
+    /**
+     * 내 정보 수정
+     * @param id
+     * @param requestMember
+     * @return
+     */
     @PatchMapping("/me")
     public ResponseEntity<MemberDto> updateMember(
-        @RequestHeader(name = "Authorization", required = true) Integer id,
+        @AuthID Integer id,
         @RequestBody RequestMember requestMember) {
-        log.info("id= {}", id);
+        log.debug("id= {}", id);
         MemberDto memberDto = memberService.updateMember(id, requestMember);
         return ResponseEntity.ok(memberDto);
     }
+    /**
+     * 회원 타임존 정보 수정
+     * @param id
+     * @param zoneId
+     * @return
+     */
+    @PutMapping("/my/timezone")
+    public ResponseEntity<MemberDto> updateMemberTimeZone(
+        @AuthID Integer id,
+        @RequestBody RequestMemberTimeZone requestMemberTimeZone) {
+        MemberDto memberDto = memberService.changeTimeZone(id, requestMemberTimeZone);
+        return ResponseEntity.ok(memberDto);
+    }
 
-//    @PostMapping("/users")
-//    public ResponseEntity<ResponseMember> createUser(@RequestBody RequestMember requestMember) {
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//
-//        MemberDto memberDto = mapper.map(requestMember, MemberDto.class);
-//        memberService.createMember(memberDto);
-//
-//        ResponseMember responseUser = mapper.map(memberDto, ResponseMember.class);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-//    }
+    /**
+     * 전체 유저 정보 조회
+     * @return
+     */
+    @GetMapping()
+    public ResponseEntity<List<MemberResponseDto>> getAllMembers() {
+        List<MemberResponseDto> memberDtoList= authService.getAllMember();
+        return ResponseEntity.ok(memberDtoList);
+    }
+    /**
+     * 유저 상세 조회
+     * @return
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberResponseDto> getOneMember(@PathVariable("id") Integer id) {
+        MemberResponseDto memberResponseDto = authService.getAuthById(id);
+        return ResponseEntity.ok(memberResponseDto);
+    }
 
 }

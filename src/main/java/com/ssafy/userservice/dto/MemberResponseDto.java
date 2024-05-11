@@ -18,21 +18,25 @@ import lombok.Setter;
 public class MemberResponseDto {
 
     private Integer id;
+    private Integer profile;
     private String name;
     private Role role;
     private String email;
     private String department;
+    private String region;
     private String zoneId;
 
     public static MemberResponseDto getMemberResponse(Auth auth) {
         return MemberResponseDto.builder()
-            .id(auth.getId())
-            .name(auth.getName())
-            .role(auth.getRole())
-            .email(auth.getMember().getEmail())
-            .department(auth.getMember().getDepartment())
-            .zoneId(auth.getMember().getZoneId())
-            .build();
+                .id(auth.getId())
+                .profile(auth.getMember().getProfile())
+                .name(auth.getName())
+                .role(auth.getRole())
+                .email(auth.getMember().getEmail())
+                .department(auth.getMember().getDepartment())
+                .region(auth.getMember().getRegion())
+                .zoneId(auth.getMember().getZoneId())
+                .build();
     }
 
 }

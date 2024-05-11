@@ -20,7 +20,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final KafkaProducer kafkaProducer;
 
-    @Value("${KAFKA_TOPIC}")
+    @Value("${kafka.topic.timezone-configured}")
     private String topic;
 
 //    @Override

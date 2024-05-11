@@ -1,6 +1,5 @@
 package com.ssafy.userservice.service;
 
-import com.ssafy.userservice.dto.ChangeTimeZoneMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,10 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, ChangeTimeZoneMessage> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void send(String topic, ChangeTimeZoneMessage message) {
-        log.info("message: memberId = {} | zoneId = {}", message.getMemberId(), message.getZoneId());
+    public void send(String topic, Object message) {
         kafkaTemplate.send(topic, message);
     }
 }

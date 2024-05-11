@@ -3,6 +3,8 @@ package com.ssafy.userservice.security.service;
 
 import com.ssafy.userservice.security.oauth2.AzureOAuth2UserInfo;
 
+import com.ssafy.userservice.service.KafkaProducer;
+import java.util.Map;
 import java.util.Optional;
 
 import com.ssafy.userservice.dto.AuthDto;
@@ -15,6 +17,7 @@ import com.ssafy.userservice.security.oauth2.Oauth2UserInfo;
 import com.ssafy.userservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -29,9 +32,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final AuthRepository authRepository;
     private final MemberService memberService;
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${kafka.topic.member-created}")
+    private String topic;
     private final String GOOGLE = "google";
     private final String AZURE = "azure";
-    private Auth auth;
 
     @Override
     @Transactional
@@ -47,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Optional<Auth> optionalUser = authRepository.findByProviderAndProviderId(
                 oauth2UserInfo.getProvider(), oauth2UserInfo.getProviderId());
+        Auth auth;
         if (optionalUser.isPresent()) {
             AuthDto authDto = AuthDto.getAuth(optionalUser.get());
             auth = Auth.toDto(authDto);
@@ -64,6 +71,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (optionalUser.isEmpty()) {
             memberService.createMember(auth, oauth2UserInfo.getEmail());
+            kafkaProducer.send(topic, Map.of("id", auth.getId(), "email", oauth2UserInfo.getEmail()));
         }
 
         return new CustomUserDetails(auth, oAuth2User.getAttributes());

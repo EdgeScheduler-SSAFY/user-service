@@ -20,7 +20,7 @@ public class CheckController {
 
     private final KafkaProducer kafkaProducer;
 
-    @Value("${KAFKA_TOPIC}")
+    @Value("${kafka.topic.timezone-configured}")
     private String topic;
 
     /**

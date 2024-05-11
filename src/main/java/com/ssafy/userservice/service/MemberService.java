@@ -7,7 +7,7 @@ import com.ssafy.userservice.vo.RequestMemberTimeZone;
 
 public interface MemberService {
 
-    void createMember(Auth auth);
+    void createMember(Auth auth, String email);
 
     MemberDto updateMember(Integer id, RequestMember requestMember);
 

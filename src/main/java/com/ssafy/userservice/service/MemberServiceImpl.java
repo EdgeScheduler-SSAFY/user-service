@@ -39,9 +39,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void createMember(Auth auth) {
+    public void createMember(Auth auth, String email) {
         Member member = Member.builder()
             .auth(auth)
+            .email(email)
             .build();
         auth.setMember(member);
     }

@@ -42,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
     public void createMember(Auth auth) {
         Member member = Member.builder()
             .auth(auth)
+            .department("Development - EdgeScheduler")
             .build();
         auth.setMember(member);
     }

@@ -20,29 +20,16 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final KafkaProducer kafkaProducer;
 
-    @Value("${KAFKA_TOPIC}")
+    @Value("${kafka.topic.timezone-configured}")
     private String topic;
-
-//    @Override
-//    public MemberDto createMember(MemberDto memberDto) {
-////        memberDto.setMemberId(UUID.randomUUID().toString());
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        Member member = mapper.map(memberDto, Member.class);
-//
-//        memberRepository.save(member);
-//
-//        MemberDto returnUserDto = mapper.map(member, MemberDto.class);
-//
-//        return returnUserDto;
-//    }
 
     @Override
     @Transactional
-    public void createMember(Auth auth) {
+    public void createMember(Auth auth, String email) {
         Member member = Member.builder()
             .auth(auth)
             .department("Development - EdgeScheduler")
+            .email(email)
             .build();
         auth.setMember(member);
     }

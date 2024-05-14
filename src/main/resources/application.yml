@@ -4,9 +4,6 @@ server:
 spring:
   application:
     name: user-service
-  cloud:
-    discovery:
-      enabled: false
   config:
     import:
       - optional:env.yml

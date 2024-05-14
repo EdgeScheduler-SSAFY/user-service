@@ -1,6 +1,7 @@
 package com.ssafy.userservice.service;
 
 import com.ssafy.userservice.dto.ChangeTimeZoneMessage;
+import com.ssafy.userservice.dto.MemberCreateMessage;
 import com.ssafy.userservice.dto.MemberDto;
 import com.ssafy.userservice.entity.Auth;
 import com.ssafy.userservice.entity.Member;
@@ -21,7 +22,10 @@ public class MemberServiceImpl implements MemberService {
     private final KafkaProducer kafkaProducer;
 
     @Value("${kafka.topic.timezone-configured}")
-    private String topic;
+    private String tzTopic;
+
+    @Value("${kafka.topic.member-created}")
+    private String memberCreatedTopic;
 
     @Override
     @Transactional
@@ -34,10 +38,8 @@ public class MemberServiceImpl implements MemberService {
             .zoneId("Asia/Seoul")
             .build();
         auth.setMember(member);
-        kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
-            .memberId(auth.getId())
-            .zoneId(member.getZoneId())
-            .build());
+        kafkaProducer.send(memberCreatedTopic,
+            new MemberCreateMessage(auth.getId(), email, member.getZoneId()));
     }
 
     @Override
@@ -51,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
         if (requestMember.getRegion() != null && requestMember.getZoneId() != null) {
             member.changeRegion(requestMember.getRegion());
             member.changeZoneId(requestMember.getZoneId());
-            kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
+            kafkaProducer.send(tzTopic, ChangeTimeZoneMessage.builder()
                 .memberId(id)
                 .zoneId(requestMember.getZoneId())
                 .build());
@@ -67,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(id).orElseThrow(NotFoundException::new);
         member.changeRegion(memberTimeZone.getRegion());
         member.changeZoneId(memberTimeZone.getZoneId());
-        kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
+        kafkaProducer.send(tzTopic, ChangeTimeZoneMessage.builder()
             .memberId(id)
             .zoneId(memberTimeZone.getZoneId())
             .build());

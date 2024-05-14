@@ -34,6 +34,10 @@ public class MemberServiceImpl implements MemberService {
             .zoneId("Asia/Seoul")
             .build();
         auth.setMember(member);
+        kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
+            .memberId(member.getId())
+            .zoneId(member.getZoneId())
+            .build());
     }
 
     @Override

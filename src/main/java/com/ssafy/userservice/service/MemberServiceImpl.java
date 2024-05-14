@@ -30,6 +30,8 @@ public class MemberServiceImpl implements MemberService {
             .auth(auth)
             .department("Development - EdgeScheduler")
             .email(email)
+            .region("Korea")
+            .zoneId("Asia/Seoul")
             .build();
         auth.setMember(member);
     }

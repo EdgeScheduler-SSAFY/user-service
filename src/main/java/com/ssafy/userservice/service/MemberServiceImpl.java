@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
             .build();
         auth.setMember(member);
         kafkaProducer.send(topic, ChangeTimeZoneMessage.builder()
-            .memberId(member.getId())
+            .memberId(auth.getId())
             .zoneId(member.getZoneId())
             .build());
     }

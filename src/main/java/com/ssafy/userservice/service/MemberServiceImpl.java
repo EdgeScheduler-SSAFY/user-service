@@ -40,6 +40,10 @@ public class MemberServiceImpl implements MemberService {
         auth.setMember(member);
         kafkaProducer.send(memberCreatedTopic,
             new MemberCreateMessage(auth.getId(), email, member.getZoneId()));
+        kafkaProducer.send(tzTopic, ChangeTimeZoneMessage.builder()
+            .memberId(auth.getId())
+            .zoneId(member.getZoneId())
+            .build());
     }
 
     @Override

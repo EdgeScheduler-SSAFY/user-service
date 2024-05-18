@@ -4,6 +4,7 @@ import com.ssafy.userservice.dto.AuthDto;
 import com.ssafy.userservice.dto.MemberResponseDto;
 import com.ssafy.userservice.entity.Auth;
 import com.ssafy.userservice.entity.Member;
+import com.ssafy.userservice.exception.MemberNotFoundException;
 import com.ssafy.userservice.exception.RefreshTokenException;
 import com.ssafy.userservice.repository.AuthRepository;
 import com.ssafy.userservice.security.jwt.JwtTokenDto;
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public MemberResponseDto getAuthById(int id) {
         Auth auth = authRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Can't find auth with this id. -> " + id));
+            .orElseThrow(() -> new MemberNotFoundException("Can't find auth with this id. -> " + id));
         return MemberResponseDto.getMemberResponse(auth);
     }
 
